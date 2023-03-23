@@ -15,6 +15,17 @@ variable "environment" {
   default = "dev"
 }
 
+variable "parameter_base_path_prefix" {
+  type = string
+  default = "/application/ec2deployer/"
+  sensitive = true
+}
+
+variable "parameter_base_path_suffix" {
+  type = string
+  default = "/resource/terraform/"
+}
+
 #variable "AWS_ACCESS_KEY_ID" {}
 #
 #variable "AWS_SECRET_ACCESS_KEY" {}

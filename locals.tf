@@ -6,7 +6,7 @@ resource "random_id" "deployment_id" {
 # One deployer account, one dev account, one dev account
 # have terraform code to do: if env=prod select prod environment
 locals {
-  subnets                = ["PublicSubnet01", "PublicSubnet02"]
+#  subnets                = ["PublicSubnet01", "PublicSubnet02"]
   project_name           = "ec2deployer"
   replace_string         = "REPLACEME"
   localized_project_name = "${local.project_name}-${local.replace_string}-${local.upper_env}"
@@ -25,7 +25,8 @@ locals {
   igw_type               = "igw"
   nacl_type              = "nacl"
   route_table_type       = "route-table"
-  subnet_cidrs = reverse(cidrsubnets("15.0.0.0/16", 8,4,4))
+  subnet_cidrs = cidrsubnets("15.0.0.0/16", 8,4,4)
+  parameter_base_path = "${var.parameter_base_path_prefix}${var.environment}${var.parameter_base_path_suffix}"
 
 
   common_tags            = tomap({
@@ -49,6 +50,60 @@ locals {
       local.common_tags
     )
   }
+
+#  subnets = {
+#    PublicSubnet1 = {
+#      vpc_id = aws_vpc.custom_vpc.id
+#      map_public_ip_on_launch = true
+#      cidr_block = local.subnet_cidrs[0]
+#      availability_zone = data.aws_availability_zones.azs.names[0]
+#    }
+#    PublicSubnet2 = {
+#      vpc_id = aws_vpc.custom_vpc.id
+#      map_public_ip_on_launch = true
+#      cidr_block = local.subnet_cidrs[1]
+#      availability_zone = data.aws_availability_zones.azs.names[1]
+#    }
+#    PrivateSubnet1 = {
+#      vpc_id = aws_vpc.custom_vpc.id
+#      map_public_ip_on_launch = false
+#      cidr_block = local.subnet_cidrs[2]
+#      availability_zone = data.aws_availability_zones.azs.names[2]
+#    }
+#  }
+
+  subnets = [
+    {
+      map_public_ip_on_launch = true
+      tags                    = {
+        "Name"        = replace(local.localized_project_name, local.replace_string, "PublicSubnet01"),
+        "NAME"        = replace(local.localized_project_name, local.replace_string, "PublicSubnet01"),
+        "TYPE"        = "Subnet",
+        "PARAM_NAME"= "public-subnet-01"
+        "SUBNET_TYPE" = "Public"
+      }
+    },
+    {
+      map_public_ip_on_launch = true
+      tags                    = {
+        "Name"        = replace(local.localized_project_name, local.replace_string, "PublicSubnet02"),
+        "NAME"        = replace(local.localized_project_name, local.replace_string, "PublicSubnet02"),
+        "PARAM_NAME"= "public-subnet-02"
+        "TYPE"        = "Subnet",
+        "SUBNET_TYPE" = "Public"
+      }
+    },
+    {
+      map_public_ip_on_launch = false
+      tags                    = {
+        "Name"        = replace(local.localized_project_name, local.replace_string, "PrivateSubnet02"),
+        "NAME"        = replace(local.localized_project_name, local.replace_string, "PrivateSubnet02"),
+        "PARAM_NAME"= "private-subnet-01"
+        "TYPE"        = "Subnet",
+        "SUBNET_TYPE" = "Private"
+      }
+    }
+  ]
 #  subnet_tags = merge(
 #    tomap({
 #      "Name" = replace(local.localized_project_name, local.replace_string, "${local.subnet_sub_type}-${local.subnet_type}"),
