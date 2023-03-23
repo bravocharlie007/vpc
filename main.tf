@@ -8,6 +8,7 @@ resource "aws_vpc" "custom_vpc" {
   instance_tenancy     = var.instance_tenancy
   enable_dns_support   = true
   enable_dns_hostnames = true
+  tags = local.tags.vpc
 }
 
 #############################################
@@ -26,7 +27,7 @@ resource "aws_vpc" "custom_vpc" {
 #  }
 #}
 
-resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "subnet" {
   count             = length(local.subnets)
   vpc_id            = aws_vpc.custom_vpc.id
   availability_zone = data.aws_availability_zones.azs.names[count.index]
@@ -70,9 +71,10 @@ resource "aws_subnet" "public_subnet" {
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.custom_vpc.id
 
-  tags = {
-    "Name" = "Internet-Gateway"
-  }
+#  tags = {
+#    "Name" = "Internet-Gateway"
+#  }
+  tags = local.tags.igw
 }
 
 #############################################
@@ -83,9 +85,10 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.custom_vpc.id
 
-  tags = {
-    "Name" = "Public-RouteTable"
-  }
+#  tags = {
+#    "Name" = "Public-RouteTable"
+#  }
+  tags = local.tags.route-table
 }
 
 #############################################
@@ -98,7 +101,6 @@ resource "aws_route" "public_route" {
   route_table_id         = aws_route_table.public_rt.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.igw.id
-
 }
 
 #############################################
@@ -108,10 +110,10 @@ resource "aws_route" "public_route" {
 #############################################
 
 resource "aws_route_table_association" "public_rt_association" {
-  count          = length(aws_subnet.public_subnet)
+  count          = length(aws_subnet.subnet)
   route_table_id = aws_route_table.public_rt.id
 
-  subnet_id      = element(aws_subnet.public_subnet.*.id, count.index) # Is a list
+  subnet_id      = element(aws_subnet.subnet.*.id, count.index) # Is a list
 }
 
 #resource "aws_route_table_association" "public_rt_association" {

@@ -51,26 +51,6 @@ locals {
     )
   }
 
-#  subnets = {
-#    PublicSubnet1 = {
-#      vpc_id = aws_vpc.custom_vpc.id
-#      map_public_ip_on_launch = true
-#      cidr_block = local.subnet_cidrs[0]
-#      availability_zone = data.aws_availability_zones.azs.names[0]
-#    }
-#    PublicSubnet2 = {
-#      vpc_id = aws_vpc.custom_vpc.id
-#      map_public_ip_on_launch = true
-#      cidr_block = local.subnet_cidrs[1]
-#      availability_zone = data.aws_availability_zones.azs.names[1]
-#    }
-#    PrivateSubnet1 = {
-#      vpc_id = aws_vpc.custom_vpc.id
-#      map_public_ip_on_launch = false
-#      cidr_block = local.subnet_cidrs[2]
-#      availability_zone = data.aws_availability_zones.azs.names[2]
-#    }
-#  }
 
   subnets = [
     {
