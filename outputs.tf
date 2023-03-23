@@ -28,3 +28,7 @@ output "igw_id" {
 output "rt_id" {
   value = aws_route_table.public_rt.id
 }
+
+output "vpc_id" {
+  value = aws_vpc.custom_vpc.id
+}
