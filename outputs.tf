@@ -32,3 +32,7 @@ output "rt_id" {
 output "vpc_id" {
   value = aws_vpc.custom_vpc.id
 }
+
+output "root_deployment_id" {
+  value = random_id.root_deployment_id.hex
+}
