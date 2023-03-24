@@ -1,4 +1,4 @@
-resource "random_id" "deployment_id" {
+resource "random_id" "root_deployment_id" {
   byte_length = 6
 }
 
@@ -33,7 +33,8 @@ locals {
     "PROJECT_NAME"      = local.project_name,
     "PROJECT_COMPONENT" = local.project_component,
     "ENVIRONMENT"       = local.upper_env,
-    "DEPLOYMENT_ID"     = random_id.deployment_id.hex
+    "ROOT_DEPLOYMENT_ID"     = random_id.root_deployment_id.hex
+    "MODULE_DEPLOYMENT_ID" = random_id.root_deployment_id.hex
     #    "TIMESTAMP"         = local.timestamp
   })
   to_tag = ["vpc", "igw", "route-table"]
