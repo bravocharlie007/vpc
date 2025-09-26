@@ -6,7 +6,7 @@ resource "random_id" "root_deployment_id" {
 # One deployer account, one dev account, one dev account
 # have terraform code to do: if env=prod select prod environment
 locals {
-#  subnets                = ["PublicSubnet01", "PublicSubnet02"]
+  #  subnets                = ["PublicSubnet01", "PublicSubnet02"]
   project_name           = "ec2deployer"
   replace_string         = "REPLACEME"
   localized_project_name = "${local.project_name}-${local.replace_string}-${local.upper_env}"
@@ -25,15 +25,15 @@ locals {
   igw_type               = "igw"
   nacl_type              = "nacl"
   route_table_type       = "route-table"
-  subnet_cidrs = cidrsubnets("15.0.0.0/16", 8,4,4)
-  parameter_base_path = "${var.parameter_base_path_prefix}${var.environment}${var.parameter_base_path_suffix}"
+  subnet_cidrs           = cidrsubnets("15.0.0.0/16", 8, 4, 4)
+  parameter_base_path    = "${var.parameter_base_path_prefix}${var.environment}${var.parameter_base_path_suffix}"
 
 
-  common_tags            = tomap({
-    "PROJECT_NAME"      = local.project_name,
-    "PROJECT_COMPONENT" = local.project_component,
-    "ENVIRONMENT"       = local.upper_env,
-    "ROOT_DEPLOYMENT_ID"     = random_id.root_deployment_id.hex
+  common_tags = tomap({
+    "PROJECT_NAME"         = local.project_name,
+    "PROJECT_COMPONENT"    = local.project_component,
+    "ENVIRONMENT"          = local.upper_env,
+    "ROOT_DEPLOYMENT_ID"   = random_id.root_deployment_id.hex
     "MODULE_DEPLOYMENT_ID" = random_id.root_deployment_id.hex
     #    "TIMESTAMP"         = local.timestamp
   })
@@ -56,63 +56,63 @@ locals {
   subnets = [
     {
       map_public_ip_on_launch = true
-      tags                    = {
+      tags = {
         "Name"        = replace(local.localized_project_name, local.replace_string, "PublicSubnet01"),
         "NAME"        = replace(local.localized_project_name, local.replace_string, "PublicSubnet01"),
         "TYPE"        = "Subnet",
-        "PARAM_NAME"= "public-subnet-01"
+        "PARAM_NAME"  = "public-subnet-01"
         "SUBNET_TYPE" = "Public"
       }
     },
     {
       map_public_ip_on_launch = true
-      tags                    = {
+      tags = {
         "Name"        = replace(local.localized_project_name, local.replace_string, "PublicSubnet02"),
         "NAME"        = replace(local.localized_project_name, local.replace_string, "PublicSubnet02"),
-        "PARAM_NAME"= "public-subnet-02"
+        "PARAM_NAME"  = "public-subnet-02"
         "TYPE"        = "Subnet",
         "SUBNET_TYPE" = "Public"
       }
     },
     {
       map_public_ip_on_launch = false
-      tags                    = {
+      tags = {
         "Name"        = replace(local.localized_project_name, local.replace_string, "PrivateSubnet02"),
         "NAME"        = replace(local.localized_project_name, local.replace_string, "PrivateSubnet02"),
-        "PARAM_NAME"= "private-subnet-01"
+        "PARAM_NAME"  = "private-subnet-01"
         "TYPE"        = "Subnet",
         "SUBNET_TYPE" = "Private"
       }
     }
   ]
-#  subnet_tags = merge(
-#    tomap({
-#      "Name" = replace(local.localized_project_name, local.replace_string, "${local.subnet_sub_type}-${local.subnet_type}"),
-#      "NAME"        = replace(local.localized_project_name, local.replace_string, "${local.subnet_sub_type}-${local.subnet_type}"),
-#      "TYPE"        = local.subnet_type,
-#      "SUBNET_TYPE" = local.subnet_sub_type
-#    }),
-#    local.common_tags
-#    )
+  #  subnet_tags = merge(
+  #    tomap({
+  #      "Name" = replace(local.localized_project_name, local.replace_string, "${local.subnet_sub_type}-${local.subnet_type}"),
+  #      "NAME"        = replace(local.localized_project_name, local.replace_string, "${local.subnet_sub_type}-${local.subnet_type}"),
+  #      "TYPE"        = local.subnet_type,
+  #      "SUBNET_TYPE" = local.subnet_sub_type
+  #    }),
+  #    local.common_tags
+  #    )
 
-#  public_subnet_tags = merge(
-#    tomap({
-#      "Name" = replace(local.localized_project_name, local.replace_string, "${local.subnet_sub_type}-${local.subnet_type}"),
-#      "NAME"        = replace(local.localized_project_name, local.replace_string, "${local.subnet_sub_type}-${local.subnet_type}"),
-#      "TYPE"        = local.subnet_type,
-#      "SUBNET_TYPE" = local.subnet_sub_type
-#    }),
-#    local.common_tags
-#  )
-#  private_subnet_tags = merge(
-#    tomap({
-#      "Name" = replace(local.localized_project_name, local.replace_string, "${local.private_subnet_type}-${local.subnet_type}"),
-#      "NAME"        = replace(local.localized_project_name, local.replace_string, "${local.private_subnet_type}-${local.subnet_type}"),
-#      "TYPE"        = local.subnet_type,
-#      "SUBNET_TYPE" = local.private_subnet_type
-#    }),
-#    local.common_tags
-#  )
+  #  public_subnet_tags = merge(
+  #    tomap({
+  #      "Name" = replace(local.localized_project_name, local.replace_string, "${local.subnet_sub_type}-${local.subnet_type}"),
+  #      "NAME"        = replace(local.localized_project_name, local.replace_string, "${local.subnet_sub_type}-${local.subnet_type}"),
+  #      "TYPE"        = local.subnet_type,
+  #      "SUBNET_TYPE" = local.subnet_sub_type
+  #    }),
+  #    local.common_tags
+  #  )
+  #  private_subnet_tags = merge(
+  #    tomap({
+  #      "Name" = replace(local.localized_project_name, local.replace_string, "${local.private_subnet_type}-${local.subnet_type}"),
+  #      "NAME"        = replace(local.localized_project_name, local.replace_string, "${local.private_subnet_type}-${local.subnet_type}"),
+  #      "TYPE"        = local.subnet_type,
+  #      "SUBNET_TYPE" = local.private_subnet_type
+  #    }),
+  #    local.common_tags
+  #  )
 
   vpc_tags = merge(
     tomap({

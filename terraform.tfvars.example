@@ -1,0 +1,22 @@
+# Example Terraform variables file
+# Copy this file to terraform.tfvars and customize for your environment
+
+# VPC Configuration
+custom_vpc = "15.0.0.0/16"
+
+# Instance tenancy (default or dedicated)
+instance_tenancy = "default"
+
+# Environment (dev, staging, prod)
+environment = "dev"
+
+# SSM Parameter Store configuration
+# WARNING: Keep these paths consistent across workspaces
+parameter_base_path_prefix = "/application/ec2deployer/"
+parameter_base_path_suffix = "/resource/terraform/"
+
+# AWS Provider region is set in providers.tf
+# Ensure your AWS credentials are configured via:
+# - AWS CLI: aws configure
+# - Environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+# - IAM roles (recommended for production)
