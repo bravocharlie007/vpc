@@ -82,3 +82,29 @@ output "rds_security_group_id" {
   description = "RDS security group ID"
   value       = aws_security_group.rds_sg.id
 }
+
+# Gaming Outputs (conditional)
+output "gaming_subnet_id" {
+  description = "Gaming subnet ID (if gaming setup is enabled)"
+  value       = var.enable_gaming_setup ? aws_subnet.gaming_subnet[0].id : null
+}
+
+output "gaming_pc_security_group_id" {
+  description = "Gaming PC security group ID (if gaming setup is enabled)" 
+  value       = var.enable_gaming_setup ? aws_security_group.gaming_pc_sg[0].id : null
+}
+
+output "gaming_temp_access_security_group_id" {
+  description = "Gaming temporary access security group ID (if gaming setup is enabled)"
+  value       = var.enable_gaming_setup ? aws_security_group.gaming_temp_access[0].id : null
+}
+
+output "gaming_instance_profile_name" {
+  description = "Gaming PC instance profile name (if gaming setup is enabled)"
+  value       = var.enable_gaming_setup ? aws_iam_instance_profile.gaming_pc_profile[0].name : null
+}
+
+output "gaming_vpn_connection_id" {
+  description = "Gaming VPN connection ID (if gaming setup is enabled)"
+  value       = var.enable_gaming_setup ? aws_vpn_connection.gaming_vpn[0].id : null
+}

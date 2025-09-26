@@ -12,6 +12,7 @@ This Terraform project creates a secure AWS Virtual Private Cloud (VPC) infrastr
 ✅ **Removed Security Risks**: Eliminated commented credential references  
 ✅ **Enhanced Security Groups**: Added comprehensive security group templates  
 ✅ **Network Isolation**: Private subnets now properly isolated from direct internet access  
+✅ **Gaming PC Security**: Added secure access patterns for cloud gaming without known IP addresses
 
 ## Architecture Overview
 
@@ -21,14 +22,16 @@ This Terraform project creates a secure AWS Virtual Private Cloud (VPC) infrastr
 VPC (15.0.0.0/16)
 ├── Availability Zone A (us-east-1a)
 │   ├── Public Subnet 01 (15.255.0.0/24)    ← ALB, NAT Gateway
-│   └── Private Subnet 01 (15.224.0.0/20)   ← EC2 Instances
+│   ├── Private Subnet 01 (15.224.0.0/20)   ← EC2 Instances
+│   └── Gaming Subnet (15.0.100.0/24)       ← Gaming PC (optional)
 ├── Availability Zone B (us-east-1b)
 │   ├── Public Subnet 02 (15.240.0.0/20)    ← ALB, Bastion
 │   └── Private Subnet 02 (TBD)              ← Database, Cache
 │
 ├── Internet Gateway → Public Subnets
 ├── NAT Gateway (in Public Subnet 01) → Private Subnets
-└── Security Groups (ALB, EC2, RDS, Default)
+├── VPN Gateway → Gaming Subnet (optional)
+└── Security Groups (ALB, EC2, RDS, Gaming, Default)
 
 ### Infrastructure Components
 
@@ -36,14 +39,17 @@ VPC (15.0.0.0/16)
 - **VPC**: Custom Virtual Private Cloud (default: `15.0.0.0/16`)
 - **Public Subnets**: 2 subnets for internet-facing resources (ALB, NAT Gateway)
 - **Private Subnets**: 1+ subnets for internal resources (EC2, RDS, ElastiCache)
+- **Gaming Subnet**: Optional dedicated subnet for gaming PC with VPN access
 - **Internet Gateway**: Internet access for public subnets
 - **NAT Gateway**: Secure outbound internet access for private subnets
-- **Route Tables**: Separate routing for public and private subnets
+- **VPN Gateway**: Secure access for gaming PC (optional)
+- **Route Tables**: Separate routing for public, private, and gaming subnets
 
 **Security Components:**
 - **KMS Key**: Customer-managed encryption for SSM parameters
-- **Security Groups**: Pre-configured templates for ALB, EC2, RDS
+- **Security Groups**: Pre-configured templates for ALB, EC2, RDS, Gaming PC
 - **Default Security Group**: Restrictive default settings
+- **Gaming Security**: VPN + temporary access patterns for unknown IP addresses
 - **Network ACLs**: Additional network-level security (planned)
 
 **Integration Components:**
@@ -120,6 +126,9 @@ graph TD
 | `environment` | Deployment environment | `dev` | string | No |
 | `parameter_base_path_prefix` | SSM parameter path prefix | `/application/ec2deployer/` | string | Yes |
 | `parameter_base_path_suffix` | SSM parameter path suffix | `/resource/terraform/` | string | No |
+| `enable_gaming_setup` | Enable gaming PC security setup | `true` | bool | No |
+| `gaming_vpn_public_ip` | Your home public IP for VPN | `1.1.1.1` | string | Yes |
+| `gaming_custom_ports` | Custom gaming ports (TCP/UDP) | `{tcp_ports=[7777,7778,7779], udp_ports=[7777,7778,7779]}` | object | No |
 
 ### Environment Support
 

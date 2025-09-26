@@ -134,3 +134,52 @@ resource "aws_ssm_parameter" "rds_sg" {
     }
   )
 }
+
+# Gaming Parameters (conditional)
+resource "aws_ssm_parameter" "gaming_subnet" {
+  count  = var.enable_gaming_setup ? 1 : 0
+  type   = "String"
+  name   = "${local.parameter_base_path}gaming-subnet-id"
+  value  = aws_subnet.gaming_subnet[0].id
+  key_id = aws_kms_key.ssm_key.key_id
+
+  tags = merge(
+    local.common_tags,
+    {
+      "Name" = "${local.parameter_base_path}gaming-subnet-id"
+      "TYPE" = "SSM Parameter"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "gaming_pc_sg" {
+  count  = var.enable_gaming_setup ? 1 : 0
+  type   = "String"
+  name   = "${local.parameter_base_path}gaming-pc-security-group-id"
+  value  = aws_security_group.gaming_pc_sg[0].id
+  key_id = aws_kms_key.ssm_key.key_id
+
+  tags = merge(
+    local.common_tags,
+    {
+      "Name" = "${local.parameter_base_path}gaming-pc-security-group-id"
+      "TYPE" = "SSM Parameter"
+    }
+  )
+}
+
+resource "aws_ssm_parameter" "gaming_temp_sg" {
+  count  = var.enable_gaming_setup ? 1 : 0
+  type   = "String"
+  name   = "${local.parameter_base_path}gaming-temp-access-security-group-id"
+  value  = aws_security_group.gaming_temp_access[0].id
+  key_id = aws_kms_key.ssm_key.key_id
+
+  tags = merge(
+    local.common_tags,
+    {
+      "Name" = "${local.parameter_base_path}gaming-temp-access-security-group-id"
+      "TYPE" = "SSM Parameter"
+    }
+  )
+}

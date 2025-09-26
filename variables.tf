@@ -25,3 +25,29 @@ variable "parameter_base_path_suffix" {
   type    = string
   default = "/resource/terraform/"
 }
+
+# Gaming PC Configuration
+variable "enable_gaming_setup" {
+  description = "Enable gaming PC specific security and networking setup"
+  type        = bool
+  default     = true
+}
+
+variable "gaming_vpn_public_ip" {
+  description = "Public IP address for VPN endpoint (your home router's public IP)"
+  type        = string
+  default     = "1.1.1.1"  # Placeholder - replace with actual IP
+  sensitive   = true
+}
+
+variable "gaming_custom_ports" {
+  description = "Custom gaming ports to open (TCP and UDP)"
+  type = object({
+    tcp_ports = list(number)
+    udp_ports = list(number)
+  })
+  default = {
+    tcp_ports = [7777, 7778, 7779]
+    udp_ports = [7777, 7778, 7779] 
+  }
+}
